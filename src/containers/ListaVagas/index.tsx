@@ -1,12 +1,10 @@
 import { useState } from 'react'
 import FormVagas from '../../components/FormVagas'
-
-import Vaga from '../../components/Vaga'
-
-import styles from './ListaVagas.module.css'
+import Vaga from '../Vaga'
+import { Vagas } from './styles'
 
 type Vaga = {
-  id: string
+  id: number // Alterado para `number`, para coincidir com os dados
   titulo: string
   localizacao: string
   nivel: string
@@ -92,27 +90,32 @@ const vagas = [
 const ListaVagas = () => {
   const [filtro, setFiltro] = useState<string>('')
 
-  const vagasFiltradas = vagas.filter(
-    (x) => x.titulo.toLocaleLowerCase().search(filtro) >= 0
+  const vagasFiltradas = vagas.filter((vaga) =>
+    vaga.titulo.toLowerCase().includes(filtro)
   )
+
+  const capitalize = (word: string): string => {
+    if (!word) return ''
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+  }
 
   return (
     <div>
       <FormVagas aoPesquisar={(termo: string) => setFiltro(termo)} />
-      <ul className={styles.vagas}>
-        {vagasFiltradas.map((vag) => (
+      <Vagas aria-label="Lista de vagas disponíveis">
+        {vagasFiltradas.map((vaga) => (
           <Vaga
-            key={vag.id}
-            titulo={vag.titulo}
-            localizacao={vag.localizacao}
-            nivel={vag.nivel}
-            modalidade={vag.modalidade}
-            salarioMin={vag.salarioMin}
-            salarioMax={vag.salarioMax}
-            requisitos={vag.requisitos}
+            key={vaga.id}
+            titulo={vaga.titulo}
+            localizacao={capitalize(vaga.localizacao)}
+            nivel={capitalize(vaga.nivel)}
+            modalidade={vaga.modalidade.toUpperCase()}
+            salarioMin={vaga.salarioMin}
+            salarioMax={vaga.salarioMax}
+            requisitos={vaga.requisitos}
           />
         ))}
-      </ul>
+      </Vagas>
     </div>
   )
 }
